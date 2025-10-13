@@ -1,4 +1,3 @@
-
 # API_Utopia603
 
 API criada com NestJS para normalização e armazenamento de dados de usuários de programa de fidelidade em PostgreSQL.
@@ -46,6 +45,7 @@ DB_DATABASE=api_utopia
 ```bash
 npm run start:dev
 ```
+
 Acesse as rotas padrão em `http://localhost:3000`.
 
 ## Exemplos de requisição
