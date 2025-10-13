@@ -3,6 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
 import { UsuarioModule } from './usuario/usuario.module';
 import { FidelidadeModule } from './fidelidade/fidelidade.module';
+import { ImportacaoModule } from './importacao/importacao.module';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { FidelidadeModule } from './fidelidade/fidelidade.module';
     }),
     UsuarioModule,
     FidelidadeModule,
+    ImportacaoModule,
   ],
 })
 export class AppModule {}
