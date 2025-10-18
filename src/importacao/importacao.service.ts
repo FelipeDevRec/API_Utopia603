@@ -24,24 +24,39 @@ export class ImportacaoService {
         .createReadStream(file.buffer)
         .pipe(csvParser());
 
-      stream.on('data', (data: Record<string, any>) => resultados.push(data));
+      stream.on('data', (data: Record<string, any>) => {
+        console.log('Dados recebidos:', data);
+        resultados.push(data);
+      });
       stream.on('end', async () => {
         for (const item of resultados) {
+          const chaves = Object.keys(item);
+          const nome = item[chaves[0]]; // Nome
+          const email = item[chaves[1]]; // Email
+          const saldoPontos = item[chaves[2]]; // Saldo de pontos
+          const pontosResgatados = item[chaves[3]]; // Pontos resgatados
+          const ultimaAtividade = item[chaves[4]]; // Última atividade
+          
+          if (!nome || !email) {
+            console.log('Pulando item com dados inválidos:', { nome, email });
+            continue;
+          }
+          
           let usuario = await this.usuarioRepo.findOne({
-            where: { email: item.email },
+            where: { email },
           });
           if (!usuario) {
             usuario = this.usuarioRepo.create({
-              nome: item.nome,
-              email: item.email,
+              nome,
+              email,
             });
             usuario = await this.usuarioRepo.save(usuario);
           }
           const fidelidade = this.fidelidadeRepo.create({
             usuario,
-            saldo_pontos: Number(item.saldo_pontos || 0),
-            pontos_resgatados: Number(item.pontos_resgatados || 0),
-            ultima_atividade: new Date(item.ultima_atividade),
+            saldo_pontos: Number(saldoPontos || 0),
+            pontos_resgatados: Number(pontosResgatados || 0),
+            ultima_atividade: new Date(ultimaAtividade),
           });
           await this.fidelidadeRepo.save(fidelidade);
         }
