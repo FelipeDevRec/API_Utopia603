@@ -9,7 +9,10 @@ import {
 } from '@nestjs/common';
 import { FidelidadeService } from './fidelidade.service';
 import { Fidelidade } from './fidelidade.entity';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { UseGuards } from '@nestjs/common';
 
+@UseGuards(JwtAuthGuard)
 @Controller('fidelidades')
 export class FidelidadeController {
   constructor(private readonly fidelidadeService: FidelidadeService) {}
