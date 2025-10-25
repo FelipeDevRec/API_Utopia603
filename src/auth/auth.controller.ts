@@ -69,9 +69,7 @@ export class AuthController {
     const user = await this.usuarioService.findByEmail(body.email);
     if (!user) throw new UnauthorizedException('Usuário não encontrado');
     if (user.senha) throw new UnauthorizedException('Usuário já possui senha');
-    // Gerar hash e salvar
-    const hash = await bcrypt.hash(body.senha, 10);
-    await this.usuarioService.editarUsuario(user.id, { senha: hash });
+    await this.usuarioService.editarUsuario(user.id, { senha: body.senha });
     return { message: 'Senha definida com sucesso! Agora você pode logar.' };
   }
 }

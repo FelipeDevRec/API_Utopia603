@@ -12,7 +12,6 @@ import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { UseGuards } from '@nestjs/common';
 import { BadRequestException } from '@nestjs/common';
 
-
 @UseGuards(JwtAuthGuard)
 @Controller('importacao')
 export class ImportacaoController {
