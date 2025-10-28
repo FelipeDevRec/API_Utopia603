@@ -66,10 +66,19 @@ export class AuthController {
     description: 'Usuário não encontrado ou já possui senha.',
   })
   async definirSenha(@Body() body: DefinirSenhaDto) {
-    const user = await this.usuarioService.findByEmail(body.email);
-    if (!user) throw new UnauthorizedException('Usuário não encontrado');
-    if (user.senha) throw new UnauthorizedException('Usuário já possui senha');
-    await this.usuarioService.editarUsuario(user.id, { senha: body.senha });
-    return { message: 'Senha definida com sucesso! Agora você pode logar.' };
+    try {
+      const user = await this.usuarioService.findByEmail(body.email);
+      if (!user) throw new UnauthorizedException('Usuário não encontrado');
+
+      if (user.senha)
+        throw new UnauthorizedException('Usuário já possui senha');
+
+      await this.usuarioService.editarUsuario(user.id, { senha: body.senha });
+
+      return { message: 'Senha definida com sucesso! Agora você pode logar.' };
+    } catch (error) {
+      if (error instanceof UnauthorizedException) throw error;
+      throw new UnauthorizedException('Erro ao definir senha');
+    }
   }
 }

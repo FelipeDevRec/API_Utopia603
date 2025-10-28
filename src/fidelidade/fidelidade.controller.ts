@@ -7,10 +7,12 @@ import {
   Body,
   Param,
   UseGuards,
+  NotFoundException,
 } from '@nestjs/common';
 import { FidelidadeService } from './fidelidade.service';
 import { Fidelidade } from './fidelidade.entity';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { UsuarioService } from '../usuario/usuario.service';
 import {
   ApiBearerAuth,
   ApiTags,
@@ -58,7 +60,10 @@ export class EditFidelidadeDto {
 @UseGuards(JwtAuthGuard)
 @Controller('fidelidades')
 export class FidelidadeController {
-  constructor(private readonly fidelidadeService: FidelidadeService) {}
+  constructor(
+    private readonly fidelidadeService: FidelidadeService,
+    private readonly usuarioService: UsuarioService,
+  ) {}
 
   @Post()
   @ApiOperation({ summary: 'Cria um novo registro de fidelidade' })
@@ -69,7 +74,16 @@ export class FidelidadeController {
     type: Fidelidade,
   })
   async criar(@Body() data: CreateFidelidadeDto): Promise<Fidelidade> {
-    return this.fidelidadeService.criarFidelidade(data);
+    const usuario = await this.usuarioService.buscarPorId(data.id_usuario);
+    if (!usuario) {
+      throw new NotFoundException('Usuário não encontrado');
+    }
+    return this.fidelidadeService.criarFidelidade({
+      usuario,
+      saldo_pontos: data.saldo_pontos,
+      pontos_resgatados: data.pontos_resgatados,
+      ultima_atividade: data.ultima_atividade,
+    });
   }
 
   @Get()
